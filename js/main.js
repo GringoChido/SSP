@@ -9,17 +9,18 @@ document.addEventListener('DOMContentLoaded', () => {
      ============================================ */
   const navToggle = document.querySelector('.nav-toggle');
   const navLinks = document.querySelector('.nav-links');
-  if (navToggle && navLinks) {
+  const navLinksMobile = document.querySelector('.nav-links-mobile');
+  if (navToggle && navLinksMobile) {
     navToggle.addEventListener('click', () => {
       navToggle.classList.toggle('active');
-      navLinks.classList.toggle('open');
-      document.body.style.overflow = navLinks.classList.contains('open') ? 'hidden' : '';
+      navLinksMobile.classList.toggle('open');
+      document.body.style.overflow = navLinksMobile.classList.contains('open') ? 'hidden' : '';
     });
 
-    navLinks.querySelectorAll('a').forEach(link => {
+    navLinksMobile.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
         navToggle.classList.remove('active');
-        navLinks.classList.remove('open');
+        navLinksMobile.classList.remove('open');
         document.body.style.overflow = '';
       });
     });
@@ -29,9 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
-        if (window.innerWidth > 768 && navLinks.classList.contains('open')) {
+        if (window.innerWidth > 768 && navLinksMobile.classList.contains('open')) {
           navToggle.classList.remove('active');
-          navLinks.classList.remove('open');
+          navLinksMobile.classList.remove('open');
           document.body.style.overflow = '';
         }
       }, 100);

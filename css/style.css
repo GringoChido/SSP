@@ -215,6 +215,10 @@ h4 {
   transform: rotate(-45deg) translate(5px, -5px);
 }
 
+.nav-links-mobile {
+  display: none;
+}
+
 /* ============================================
    HERO — Informational Prestige
    ============================================ */
@@ -733,35 +737,26 @@ a, button, .roster-name, .artist-tab, .social-link {
 /* Hero */
 .artist-hero {
   position: relative;
-  height: 70vh;
-  min-height: 500px;
-  display: flex;
-  align-items: flex-end;
   overflow: hidden;
 }
 
-.artist-hero-bg {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  filter: brightness(0.3) contrast(1.1) saturate(0.7);
-}
-
-.artist-hero-bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, var(--color-bg) 0%, transparent 60%);
+.artist-hero-img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .artist-hero-content {
-  position: relative;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   z-index: 2;
   padding: 0 var(--container-padding) 4rem;
   max-width: var(--container-max);
   width: 100%;
   margin: 0 auto;
+  opacity: 0.2;
 }
 
 .artist-hero-content .label {
@@ -1270,9 +1265,17 @@ a, button, .roster-name, .artist-tab, .social-link {
 
 @media (max-width: 768px) {
   .nav-links {
+    display: none;
+  }
+
+  .nav-links-mobile {
+    display: flex;
     position: fixed;
-    inset: 0;
-    background: var(--color-bg);
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000000;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -1283,18 +1286,19 @@ a, button, .roster-name, .artist-tab, .social-link {
     z-index: 999;
   }
 
-  .nav-links.open { transform: translateY(0); visibility: visible; }
+  .nav-links-mobile.open { transform: translateY(0); visibility: visible; }
 
-  .nav-links a {
+  .nav-links-mobile a {
     font-family: var(--font-display);
     font-size: 2rem;
     font-weight: 700;
     color: var(--color-text);
     letter-spacing: 0;
     text-transform: none;
+    padding: 0.5rem 0;
   }
 
-  .nav-links a:hover { color: var(--color-accent); }
+  .nav-links-mobile a:hover { color: var(--color-accent); }
 
   .nav-toggle {
     display: flex;
@@ -1339,15 +1343,6 @@ a, button, .roster-name, .artist-tab, .social-link {
   }
 
   /* --- Artist hero optimization --- */
-  .artist-hero {
-    height: 60vh;
-    min-height: 350px;
-  }
-
-  .artist-hero-content {
-    padding-bottom: 2rem;
-  }
-
   .artist-hero-content h1 {
     font-size: clamp(2rem, 7vw, 3.5rem);
   }
@@ -1404,11 +1399,6 @@ a, button, .roster-name, .artist-tab, .social-link {
   .contact-form .btn {
     width: 100%;
     justify-content: center;
-  }
-
-  /* --- Mobile nav link touch targets --- */
-  .nav-links a {
-    padding: 0.5rem 0;
   }
 
   /* --- Footer mobile --- */
