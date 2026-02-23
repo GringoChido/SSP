@@ -1004,6 +1004,19 @@ a, button, .roster-name, .artist-tab, .social-link {
   text-align: center;
 }
 
+.tour-loading {
+  text-align: center;
+  padding: 4rem 0;
+  color: var(--color-text-dim);
+  font-size: 0.9rem;
+}
+
+.tour-date-link {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.65rem;
+  white-space: nowrap;
+}
+
 .no-dates-message {
   text-align: center;
   padding: 4rem 0;

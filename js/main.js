@@ -142,6 +142,64 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ============================================
+     BANDSINTOWN — Tour Dates API
+     ============================================ */
+  const tourContainer = document.querySelector('.tour-dates-container');
+  if (tourContainer) {
+    const artistName = tourContainer.dataset.bitArtist;
+    const appId = tourContainer.dataset.bitAppid;
+    const encodedArtist = encodeURIComponent(artistName);
+
+    fetch(`https://rest.bandsintown.com/artists/${encodedArtist}/events?app_id=${appId}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Network response was not ok');
+        return res.json();
+      })
+      .then(events => {
+        if (!events || events.length === 0) {
+          tourContainer.innerHTML = `
+            <div class="no-dates-message">
+              <p>No upcoming dates at this time.</p>
+              <p>Check <a href="https://www.bandsintown.com/a/1/events" target="_blank">Bandsintown</a> for updates.</p>
+            </div>`;
+          return;
+        }
+
+        const html = events.map(event => {
+          const date = new Date(event.datetime);
+          const day = date.getDate();
+          const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+          const venue = event.venue.name;
+          const city = event.venue.city;
+          const region = event.venue.region || event.venue.country;
+          const ticketUrl = event.offers && event.offers.length > 0 ? event.offers[0].url : event.url;
+
+          return `
+            <div class="tour-date">
+              <div>
+                <span class="tour-date-day">${day}</span>
+                <span class="tour-date-month">${month}</span>
+              </div>
+              <div class="tour-date-info">
+                <h4>${venue}</h4>
+                <p>${city}, ${region}</p>
+              </div>
+              <a href="${ticketUrl}" target="_blank" class="btn tour-date-link">Tickets <span class="btn-arrow">&rarr;</span></a>
+            </div>`;
+        }).join('');
+
+        tourContainer.innerHTML = html;
+      })
+      .catch(() => {
+        tourContainer.innerHTML = `
+          <div class="no-dates-message">
+            <p>Unable to load tour dates right now.</p>
+            <p>Check <a href="https://www.bandsintown.com/a/1/events" target="_blank">Bandsintown</a> for the latest schedule.</p>
+          </div>`;
+      });
+  }
+
+  /* ============================================
      SMOOTH ANCHOR SCROLLING
      ============================================ */
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
