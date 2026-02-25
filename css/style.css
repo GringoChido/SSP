@@ -1147,7 +1147,7 @@ a, button, .roster-name, .artist-tab, .social-link {
 
 .services-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.25rem;
   margin-top: 1.5rem;
 }
