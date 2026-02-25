@@ -1528,7 +1528,19 @@ a, button, .roster-name, .artist-tab, .social-link {
   .event-card { grid-template-columns: 1fr; }
   .event-image { min-height: 120px; }
 
-  .artist-meta { flex-direction: column; gap: 0.5rem; }
+  .artist-meta { flex-direction: row; flex-wrap: wrap; gap: 0.25rem 1rem; }
+
+  .artist-hero-content {
+    padding-bottom: 1.5rem;
+  }
+
+  .artist-hero-content h1 {
+    margin-bottom: 0.75rem;
+  }
+
+  .artist-hero-content .label {
+    margin-bottom: 0.5rem;
+  }
 
   .tour-date {
     grid-template-columns: 80px 1fr;
