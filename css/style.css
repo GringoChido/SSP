@@ -372,113 +372,48 @@ a, button, input, select, textarea, .btn-primary, .btn-ghost, .roster-band, .art
 }
 
 /* ============================================
-   HERO — Credential Sequence
+   HERO — Full-Bleed Image
    ============================================ */
-.credential-hero {
+.hero {
   position: relative;
   height: 100vh;
   min-height: 600px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-bg);
   overflow: hidden;
 }
 
-.credential-slide {
+.hero-bg {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
   text-align: center;
   padding: 0 var(--container-padding);
-  opacity: 0;
-  transition: opacity 0.8s ease;
-  pointer-events: none;
 }
 
-.credential-slide.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.credential-text {
+.hero-title {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: var(--text-credential);
+  font-size: clamp(1.75rem, 5.5vw, 5.5rem);
   line-height: 1.05;
   letter-spacing: -0.04em;
   color: var(--color-text);
-  text-shadow: 0 2px 40px var(--color-accent-glow);
   text-transform: uppercase;
-}
-
-.credential-final {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-8);
-}
-
-.credential-final .credential-text {
-  font-size: clamp(3rem, 8vw, 6rem);
-}
-
-.credential-skip {
-  position: absolute;
-  bottom: var(--space-8);
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: 0.08em;
-  color: var(--color-text-disabled);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-2);
-  cursor: pointer;
-  transition: color var(--transition-fast);
-  background: none;
-  border: none;
-}
-
-.credential-skip:hover {
-  color: var(--color-text-medium);
-}
-
-.credential-skip svg {
-  animation: bobDown 2s ease-in-out infinite;
-}
-
-@keyframes bobDown {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(6px); }
-}
-
-/* Reduced motion: show all stacked */
-@media (prefers-reduced-motion: reduce) {
-  .credential-hero {
-    height: auto;
-    min-height: auto;
-    padding: calc(var(--nav-height) + var(--space-32)) 0 var(--space-32);
-  }
-
-  .credential-slide {
-    position: relative;
-    opacity: 1;
-    padding: var(--space-8) var(--container-padding);
-    pointer-events: auto;
-  }
-
-  .credential-skip {
-    display: none;
-  }
-
-  .credential-text {
-    font-size: clamp(2rem, 6vw, 4rem);
-  }
 }
 
 /* ============================================
@@ -641,6 +576,11 @@ a, button, input, select, textarea, .btn-primary, .btn-ghost, .roster-band, .art
   color: var(--color-text-medium);
 }
 
+.productions-link {
+  text-align: center;
+  padding: var(--space-16) var(--container-padding) 0;
+}
+
 /* ============================================
    STATEMENT SECTION
    ============================================ */
@@ -670,6 +610,12 @@ a, button, input, select, textarea, .btn-primary, .btn-ghost, .roster-band, .art
   letter-spacing: -0.03em;
   color: var(--color-text);
   margin-bottom: var(--space-8);
+  display: flex;
+  flex-direction: column;
+}
+
+.statement-line {
+  display: block;
 }
 
 .statement-headline .brass {
@@ -716,6 +662,24 @@ a, button, input, select, textarea, .btn-primary, .btn-ghost, .roster-band, .art
 
 .btn-primary:active {
   transform: scale(0.98);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-medium);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-border);
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.btn-secondary:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
 }
 
 /* Legacy .btn class for artist pages */
@@ -1662,15 +1626,6 @@ a, button, input, select, textarea, .btn-primary, .btn-ghost, .roster-band, .art
   .form-field textarea,
   .form-field select {
     font-size: 16px;
-  }
-
-  /* Credential hero mobile */
-  .credential-text {
-    font-size: clamp(2.5rem, 8vw, 4rem);
-  }
-
-  .credential-final .credential-text {
-    font-size: clamp(2rem, 7vw, 3.5rem);
   }
 
   /* Roster mobile */
