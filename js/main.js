@@ -1,8 +1,72 @@
 /* ============================================
-   SECOND SON PRODUCTIONS — Studio Noir Engine
+   SECOND SON PRODUCTIONS — Cultural Institution Engine
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  /* ============================================
+     CREDENTIAL SEQUENCE — Timed Hero Animation
+     ============================================ */
+  const credentialHero = document.getElementById('credentialHero');
+  const credentialSlides = document.querySelectorAll('.credential-slide');
+  const credentialSkip = document.getElementById('credentialSkip');
+
+  if (credentialHero && credentialSlides.length > 0) {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      // Show all slides stacked (CSS handles layout)
+      credentialSlides.forEach(slide => slide.classList.add('active'));
+      if (credentialSkip) credentialSkip.style.display = 'none';
+    } else {
+      let currentSlide = 0;
+      const totalSlides = credentialSlides.length;
+      const slideDuration = 2500; // 2.5s per credential
+      let sequenceComplete = false;
+      let sequenceTimer = null;
+
+      const showSlide = (index) => {
+        credentialSlides.forEach(slide => slide.classList.remove('active'));
+        if (credentialSlides[index]) {
+          credentialSlides[index].classList.add('active');
+        }
+      };
+
+      const advanceSequence = () => {
+        currentSlide++;
+        if (currentSlide < totalSlides) {
+          showSlide(currentSlide);
+          if (currentSlide < totalSlides - 1) {
+            sequenceTimer = setTimeout(advanceSequence, slideDuration);
+          } else {
+            // Final slide — stays until scroll
+            sequenceComplete = true;
+          }
+        }
+      };
+
+      const skipToEnd = () => {
+        clearTimeout(sequenceTimer);
+        currentSlide = totalSlides - 1;
+        showSlide(currentSlide);
+        sequenceComplete = true;
+      };
+
+      // Start sequence
+      showSlide(0);
+      sequenceTimer = setTimeout(advanceSequence, slideDuration);
+
+      // Skip button
+      if (credentialSkip) {
+        credentialSkip.addEventListener('click', () => {
+          skipToEnd();
+          // Scroll past hero
+          const heroBottom = credentialHero.getBoundingClientRect().bottom + window.scrollY;
+          window.scrollTo({ top: heroBottom, behavior: 'smooth' });
+        });
+      }
+    }
+  }
 
   /* ============================================
      NAVIGATION — Mobile Toggle
@@ -11,16 +75,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const navLinks = document.querySelector('.nav-links');
   const navLinksMobile = document.querySelector('.nav-links-mobile');
   if (navToggle && navLinksMobile) {
+    navToggle.setAttribute('aria-expanded', 'false');
+    navToggle.setAttribute('aria-controls', 'mobile-nav');
+    navLinksMobile.id = 'mobile-nav';
+
     navToggle.addEventListener('click', () => {
       navToggle.classList.toggle('active');
       navLinksMobile.classList.toggle('open');
-      document.body.style.overflow = navLinksMobile.classList.contains('open') ? 'hidden' : '';
+      const isOpen = navLinksMobile.classList.contains('open');
+      navToggle.setAttribute('aria-expanded', String(isOpen));
+      document.body.style.overflow = isOpen ? 'hidden' : '';
     });
 
     navLinksMobile.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
         navToggle.classList.remove('active');
         navLinksMobile.classList.remove('open');
+        navToggle.setAttribute('aria-expanded', 'false');
         document.body.style.overflow = '';
       });
     });
@@ -33,6 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.innerWidth > 768 && navLinksMobile.classList.contains('open')) {
           navToggle.classList.remove('active');
           navLinksMobile.classList.remove('open');
+          navToggle.setAttribute('aria-expanded', 'false');
           document.body.style.overflow = '';
         }
       }, 100);
@@ -75,49 +147,21 @@ document.addEventListener('DOMContentLoaded', () => {
       const pending = document.querySelectorAll('.reveal:not(.visible)');
       pending.forEach(el => {
         const rect = el.getBoundingClientRect();
-        // If the element is above the viewport or within it, reveal it
         if (rect.top < window.innerHeight && rect.bottom > 0) {
           el.classList.add('visible');
           revealObserver.unobserve(el);
         } else if (rect.bottom < 0) {
-          // Element already scrolled past — reveal immediately
           el.classList.add('visible');
           revealObserver.unobserve(el);
         }
       });
     };
 
-    // Debounced scroll listener as fallback
     let fallbackTimer;
     window.addEventListener('scroll', () => {
       clearTimeout(fallbackTimer);
       fallbackTimer = setTimeout(revealFallback, 100);
     }, { passive: true });
-  }
-
-  /* ============================================
-     ROSTER — Prestige List Hover Preview
-     ============================================ */
-  const rosterNames = document.querySelectorAll('.roster-name');
-  const rosterPreviewImage = document.getElementById('rosterPreviewImage');
-
-  if (rosterNames.length > 0 && rosterPreviewImage) {
-    const defaultArtistImg = 'images/artists/robert-glasper-roster.jpg';
-
-    rosterNames.forEach(name => {
-      name.addEventListener('mouseenter', () => {
-        const img = name.dataset.artistImg;
-        if (img) {
-          rosterPreviewImage.style.backgroundImage = `url('${img}')`;
-          rosterPreviewImage.classList.add('active');
-        }
-      });
-
-      name.addEventListener('mouseleave', () => {
-        // Revert to default (Robert Glasper) instead of hiding
-        rosterPreviewImage.style.backgroundImage = `url('${defaultArtistImg}')`;
-      });
-    });
   }
 
   /* ============================================
@@ -127,12 +171,33 @@ document.addEventListener('DOMContentLoaded', () => {
   const tabContents = document.querySelectorAll('.artist-tab-content');
 
   if (tabButtons.length > 0) {
+    // Set up ARIA roles
+    const tabList = document.querySelector('.artist-tabs-inner');
+    if (tabList) tabList.setAttribute('role', 'tablist');
+
+    tabButtons.forEach(btn => {
+      btn.setAttribute('role', 'tab');
+      btn.setAttribute('aria-selected', btn.classList.contains('active') ? 'true' : 'false');
+      const target = btn.dataset.tab;
+      btn.setAttribute('aria-controls', target);
+    });
+
+    tabContents.forEach(panel => {
+      panel.setAttribute('role', 'tabpanel');
+      const matchingTab = document.querySelector(`.artist-tab[data-tab="${panel.id}"]`);
+      if (matchingTab) panel.setAttribute('aria-labelledby', matchingTab.id || panel.id + '-tab');
+    });
+
     tabButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         const target = btn.dataset.tab;
-        tabButtons.forEach(b => b.classList.remove('active'));
+        tabButtons.forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
         tabContents.forEach(c => c.classList.remove('active'));
         btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
         const targetContent = document.getElementById(target);
         if (targetContent) {
           targetContent.classList.add('active');
@@ -224,9 +289,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (contactForm) {
     contactForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const btn = contactForm.querySelector('.btn');
+      const btn = contactForm.querySelector('.btn, .btn-primary');
+      if (!btn) return;
       const originalHTML = btn.innerHTML;
-      btn.innerHTML = 'Message Sent &check;';
+      btn.innerHTML = 'Message Sent';
       btn.style.pointerEvents = 'none';
       setTimeout(() => {
         btn.innerHTML = originalHTML;
